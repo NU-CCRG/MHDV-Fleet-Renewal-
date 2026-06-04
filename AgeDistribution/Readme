@@ -1,1 +1,68 @@
+# Age Distribution Analysis
 
+This directory contains notebooks and input files used to compare heavy-duty vehicle age distributions across VIUS, local fleet datasets, and MOVES default versus VIUS-based emissions outputs.
+
+## Files
+
+### `VIUS_AgeDist_IN_IL_WI_MI_Comp.ipynb`
+
+Analyzes the 2021 Vehicle Inventory and Use Survey (VIUS) public-use file to compare heavy-duty vehicle model year distributions across Indiana, Illinois, Wisconsin, and Michigan.
+
+**Required input:**
+- `vius_2021_puf.csv`
+
+**Expected columns:**
+- `REGSTATE`
+- `MODELYEAR`
+
+**Output:**
+- Bar charts showing the percentage of heavy-duty vehicles by model year group for each state.
+
+---
+
+### `LocalFleetData_AgeDist_LicenseState.ipynb`
+
+Analyzes local fleet datasets from one intermodal company. The notebook calculates and plots both vehicle model year distributions and license state distributions for each fleet dataset.
+
+**Required inputs:**
+- `Intermodalcompany1_dataset1(in).csv`
+- `Intermodalcompany1_dataset2(in).csv`
+- `Intermodalcompany1_dataset3(in).csv`
+
+**Expected columns:**
+- `Year`
+- `License State`
+
+**Output:**
+- Bar charts showing model year distributions and registration state distributions for each local fleet dataset.
+
+---
+
+### `Baseline_vs_VIUS_CountyLevelEmissionTotals.ipynb`
+
+Compares MOVES default emissions outputs with VIUS-informed emissions outputs at the county/source type level. The notebook converts emissions from grams/month to tons/month and generates stacked bar charts for primary PM2.5 components and NOx processes for January and July.
+
+**Required inputs:**
+- `Baseline_Output_WithDescriptions.csv`
+- `VIUS_Output_WithDescriptions.csv`
+
+**Expected columns:**
+- `emissionQuant`
+- `monthID`
+- `pollutant_name`
+- `sourceTypeID`
+- `process_name`
+
+**Output:**
+- Stacked bar charts comparing default and VIUS-informed emissions by source type for:
+  - January primary PM2.5
+  - January NOx
+  - July primary PM2.5
+  - July NOx
+
+## Required Python packages
+
+```python
+pandas
+numpy
+matplotlib
