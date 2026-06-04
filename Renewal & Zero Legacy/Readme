@@ -1,1 +1,160 @@
+# Fleet Age Distribution Emission Factor Modifications
+
+This directory contains scripts, SQL modifications, and supporting datasets used to develop alternative heavy-duty vehicle (HDV) fleet age distributions and corresponding emission factors for the Accelerated Fleet Renewal and Zero Legacy Truck sensitivity simulations.
+
+The workflow begins with EPA 2022v1 MOVES emission factor tables and replaces default emission factors with values derived from standalone MOVESv4.0 simulations in which the underlying truck age distributions have been modified.
+
+## Scenario Overview
+
+### Accelerated Fleet Renewal
+
+The Accelerated Fleet Renewal scenario represents replacement of all pre-2010 medium- and heavy-duty diesel vehicles with model year 2022 vehicles. Legacy vehicle age fractions are removed and reassigned to the newest vehicle age bin within MOVES age distribution tables.
+
+### Zero Legacy Trucks
+
+The Zero Legacy Truck scenario represents complete removal of all pre-2010 medium- and heavy-duty diesel vehicles from the fleet. Legacy vehicle age fractions are set to zero without replacement.
+
+The resulting age distributions are used in standalone MOVESv4.0 simulations to generate updated emission factors that are subsequently inserted into EPA 2022v1 emissions modeling inputs.
+
+---
+
+## Input Data
+
+### EPA 2022v1 MOVES Emission Factor Tables
+
+Source:
+
+https://gaftp.epa.gov/Air/emismod/2022/v1/2022emissions/moves_eftables/
+
+These files provide the baseline emission factors used within the EPA 2022v1 Emissions Modeling Platform.
+
+### MOVESv4.0 Emission Factor Outputs
+
+Standalone MOVESv4.0 simulations were conducted using modified age distributions representing:
+
+* Accelerated Fleet Renewal
+* Zero Legacy Trucks
+
+Outputs are used to replace corresponding emission factors within EPA 2022v1 emission factor tables.
+
+### SQL Age Distribution Modifications
+
+#### `MOD_renewal_SQL.txt`
+
+SQL commands used to modify the MOVES `sourcetypeagedistribution` table for the Accelerated Fleet Renewal scenario by reallocating all pre-2010 vehicle fractions to model year 2022 vehicles.
+
+#### `MOD_pre2010s_SQL.txt`
+
+SQL commands used to modify the MOVES `sourcetypeagedistribution` table for the Zero Legacy Truck scenario by removing all pre-2010 vehicles from the fleet age distribution.
+
+---
+
+## Scripts
+
+### `Update_SMOKEInput_RPH_Renewal.ipynb`
+
+Updates EPA 2022v1 RPH emission factor inputs using MOVESv4.0 emission factors generated from modified fleet age distributions.
+
+**Required Inputs**
+
+* EPA 2022v1 RPH emission factor table
+* MOVESv4.0 renewal scenario emission factors
+
+**Output**
+
+* Modified RPH emission factor file for SMOKE processing
+
+---
+
+### `Update_SMOKEInput_RPHO_Renewal.ipynb`
+
+Updates EPA 2022v1 RPHO emission factor inputs using MOVESv4.0 renewal scenario emission factors.
+
+**Required Inputs**
+
+* EPA 2022v1 RPHO emission factor table
+* MOVESv4.0 renewal scenario emission factors
+
+**Output**
+
+* Modified RPHO emission factor file for SMOKE processing
+
+---
+
+### `Update_SMOKEInput_RPP_Renewal.ipynb`
+
+Updates EPA 2022v1 RPP emission factor inputs using modified fleet age distribution emission factors.
+
+**Required Inputs**
+
+* EPA 2022v1 RPP emission factor table
+* MOVESv4.0 renewal scenario emission factors
+
+**Output**
+
+* Modified RPP emission factor file for SMOKE processing
+
+---
+
+### `Update_SMOKEInput_RPS_Renewal.ipynb`
+
+Updates EPA 2022v1 RPS emission factor inputs using modified fleet age distribution emission factors.
+
+**Required Inputs**
+
+* EPA 2022v1 RPS emission factor table
+* MOVESv4.0 renewal scenario emission factors
+
+**Output**
+
+* Modified RPS emission factor file for SMOKE processing
+
+---
+
+### `Update_SMOKEInput_RPV_Renewal.ipynb`
+
+Updates EPA 2022v1 RPV emission factor inputs using modified fleet age distribution emission factors.
+
+**Required Inputs**
+
+* EPA 2022v1 RPV emission factor table
+* MOVESv4.0 renewal scenario emission factors
+
+**Output**
+
+* Modified RPV emission factor file for SMOKE processing
+
+---
+
+### `ZeroPre2010s_UpdateVMT.ipynb`
+
+Adjusts activity inputs to represent complete removal of pre-2010 vehicles from the fleet. Used in conjunction with the Zero Legacy Truck scenario emission factors.
+
+**Required Inputs**
+
+* Fleet age distribution data
+* Vehicle activity or VMT inputs
+* Modified MOVES age distribution outputs
+
+**Output**
+
+* Updated activity inputs for Zero Legacy Truck scenario
+
+---
+
+## Software Requirements
+
+* Python 3.x
+* pandas
+* numpy
+* matplotlib
+* jupyter notebook
+
+## Citation
+
+EPA 2022v1 Emissions Modeling Platform:
+https://gaftp.epa.gov/Air/emismod/2022/v1/
+
+MOVESv4.0:
+https://www.epa.gov/moves
 
