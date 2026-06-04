@@ -1,1 +1,220 @@
 
+# LOCUS Idling Integration Workflow
+
+This directory contains scripts used to incorporate telematics-derived LOCUS truck idling activity into the EPA 2022v1 Emissions Modeling Platform. The workflow converts gridded LOCUS idling estimates into county-level activity inputs, develops spatial surrogates for emissions allocation, modifies SMOKE input files, and compares resulting activity estimates against EPA default assumptions.
+
+## Workflow Overview
+
+The EPA 2022v1 Emissions Modeling Platform estimates heavy-duty vehicle (HDV) idling activity using county-level activity inputs and default spatial surrogates. This workflow replaces those assumptions with telematics-derived idling estimates from the LOCUS dataset.
+
+The workflow consists of four major steps:
+
+1. Convert gridded LOCUS idling activity to county-level totals.
+2. Create county-specific spatial surrogates from the gridded LOCUS dataset.
+3. Modify EPA county-level idling activity inputs used by SMOKE.
+4. Compare EPA default and LOCUS-derived activity estimates.
+
+The resulting files can be used within SMOKE to generate emissions inventories informed by observed truck idling activity.
+
+---
+
+## Input Data
+
+### LOCUS Gridded Idling Dataset
+
+Primary input consisting of gridded truck idling activity estimates derived from LOCUS telematics observations.
+
+**Required fields**
+
+* Grid cell identifier
+* Latitude/Longitude or projected coordinates
+* Idling activity metric (hours, events, or duration)
+* Grid geometry
+
+---
+
+### County Boundary Shapefile
+
+County polygons used to aggregate gridded LOCUS activity to county-level totals.
+
+**Examples**
+
+* U.S. Census TIGER/Line Counties
+* EPA modeling platform county boundaries
+
+---
+
+### EPA 2022v1 SMOKE Inputs
+
+Default county-level idling activity inputs distributed with the EPA 2022v1 Emissions Modeling Platform.
+
+Source:
+
+https://gaftp.epa.gov/Air/emismod/2022/v1/
+
+---
+
+### Spatial Allocator
+
+County-level spatial surrogates are generated using the CMAS Spatial Allocator.
+
+Source:
+
+https://www.cmascenter.org/sa-tools/
+
+---
+
+## Scripts
+
+### `LOCUS_GridToCounty_v1.ipynb`
+
+Aggregates gridded LOCUS idling activity to county-level totals.
+
+#### Inputs
+
+* Gridded LOCUS idling dataset
+* County boundary shapefile
+
+#### Outputs
+
+* County-level LOCUS idling totals
+* County summary tables used to update SMOKE inputs
+
+#### Purpose
+
+This notebook establishes county-level activity totals that replace EPA default idling estimates.
+
+---
+
+### `ModifyEPACountyLevelIdlingInputs_v2.ipynb`
+
+Updates EPA county-level idling activity files using LOCUS-derived county totals.
+
+#### Inputs
+
+* EPA county-level idling activity file
+* County-level LOCUS activity totals
+
+#### Outputs
+
+* Modified county-level activity inputs for SMOKE
+
+#### Purpose
+
+Replaces default EPA county-level idling estimates with telematics-derived values.
+
+---
+
+### `Fill_LOCUS_SpatialSurrogates_v0.ipynb`
+
+Processes Spatial Allocator outputs and fills surrogate files for counties containing LOCUS idling activity.
+
+#### Inputs
+
+* Spatial Allocator surrogate outputs
+* LOCUS gridded idling data
+* County boundary information
+
+#### Outputs
+
+* Completed surrogate files compatible with SMOKE
+
+#### Purpose
+
+Creates spatial allocation factors that distribute county-level idling activity according to observed LOCUS spatial patterns.
+
+---
+
+### `MGREF_Mod_LOCUS_Idling_v0.ipynb`
+
+Modifies SMOKE MGREF files to incorporate LOCUS-derived idling activity.
+
+#### Inputs
+
+* EPA MGREF files
+* Modified county-level idling totals
+* LOCUS surrogate identifiers
+
+#### Outputs
+
+* Updated MGREF file for the LOCUS idling scenario
+
+#### Purpose
+
+Links modified county-level activity data to the LOCUS spatial surrogate within SMOKE.
+
+---
+
+### `MGREF_Mod_LOCUS_Idling_HDVSpatial.ipynb`
+
+Extends the MGREF modifications to incorporate both:
+
+* LOCUS idling activity
+* HDV-specific on-road spatial allocation
+
+#### Inputs
+
+* Modified MGREF file
+* LOCUS surrogate definitions
+* HDV activity surrogate definitions
+
+#### Outputs
+
+* MGREF file used for the combined LOCUS + HDV Spatial scenario
+
+#### Purpose
+
+Creates the combined sensitivity simulation used in emissions modeling.
+
+---
+
+### `LOCUS_EPA_CountyLevelSpatialComp_v1.ipynb`
+
+Compares county-level idling activity estimates between EPA defaults and LOCUS-derived values.
+
+#### Inputs
+
+* EPA county-level activity estimates
+* LOCUS county-level activity estimates
+
+#### Outputs
+
+* County comparison tables
+* Summary statistics
+
+#### Purpose
+
+Quantifies differences between default and telematics-derived idling assumptions.
+
+---
+
+### `LOCUS_EPA_CMAP_Comparison_BarChart.ipynb`
+
+Generates figures comparing EPA and LOCUS activity estimates across the CMAP region.
+
+#### Inputs
+
+* EPA county-level activity totals
+* LOCUS county-level activity totals
+
+#### Outputs
+
+* Publication-quality comparison figures
+* County-level summary plots
+
+#### Purpose
+
+Visualizes the magnitude and spatial distribution of differences between the two datasets.
+
+---
+
+## Final Products
+
+This workflow produces:
+
+1. Modified county-level HDV idling activity inputs.
+2. LOCUS-derived spatial surrogates.
+3. Updated MGREF files linking activity to spatial surrogates.
+4. Quality-control figures comparing EPA and LOCUS activity estimates.
+
+These outputs are subsequently used within SMOKE to generate emissions inventories that reflect observed truck idling behavior rather than default EPA assumptions.
