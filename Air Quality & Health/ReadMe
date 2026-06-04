@@ -1,1 +1,103 @@
+# Data Processing Step 1: NetCDF to Shapefile Conversion
+
+This directory contains the first preprocessing step used to convert gridded WRF-CMAQ concentration outputs from NetCDF format into GIS-compatible shapefiles. These shapefiles are used in later analysis scripts to compare pollutant concentrations across emissions scenarios, calculate gridded concentration differences, and link modeled concentrations with census tract and population datasets.
+
+## Script
+
+### `DataProcessing_Step1_nc_to_shapefile.ipynb`
+
+This notebook converts WRF-CMAQ NetCDF output files into gridded shapefiles. Each model grid cell is converted into a spatial polygon with associated pollutant concentration values.
+
+## Purpose
+
+The WRF-CMAQ model outputs pollutant concentrations as gridded NetCDF files. These files are not directly compatible with many GIS-based workflows used for spatial comparison, census tract overlay, or population-weighted exposure analysis. This notebook converts the model grid into a shapefile format so that modeled concentrations can be joined, mapped, and spatially analyzed with demographic and boundary datasets.
+
+## Inputs
+
+### WRF-CMAQ NetCDF Output Files
+
+Scenario-specific concentration output files from the WRF-CMAQ simulations.
+
+These may include outputs for:
+
+* EPA Default/Baseline
+* LOCUS + HDV Activity Modification
+* Accelerated Fleet Renewal
+* Zero Legacy Trucks
+
+Pollutants may include:
+
+* NO₂
+* PM₂.₅
+* PM₂.₅ EC
+* O₃ / MDA8 O₃
+
+### Model Grid Information
+
+The notebook uses the WRF-CMAQ grid structure to define the geometry of each grid cell.
+
+Required grid information may include:
+
+* Grid cell row and column indices
+* Latitude and longitude coordinates
+* Projection information
+* Grid cell boundaries or centroid coordinates
+
+## Outputs
+
+### Gridded Shapefiles
+
+The primary output is a set of shapefiles containing modeled pollutant concentrations for each grid cell.
+
+Each shapefile includes:
+
+* Grid cell geometry
+* Pollutant concentration values
+* Scenario identifier
+* Month or averaging period
+* Grid row/column information, if retained
+
+These shapefiles are used as inputs for later scripts that compare concentration fields and calculate population-weighted exposure metrics.
+
+## Workflow
+
+```text
+WRF-CMAQ NetCDF Outputs
+        │
+        ▼
+DataProcessing_Step1_nc_to_shapefile.ipynb
+        │
+        ▼
+Gridded Concentration Shapefiles
+        │
+        ├──► Gridded Scenario Comparisons
+        ├──► Census Tract Overlay
+        └──► Population-Weighted Exposure Analysis
+```
+
+## Downstream Use
+
+The shapefiles produced by this notebook are used in subsequent analysis notebooks, including:
+
+* `JanJuly2023_Baseline_LOCUS_Renewal_ZeroLegacy_GriddedComparison_Final.ipynb`
+* `JanJuly2023_Baseline_LOCUS_Renewal_ZeroLegacy_CTComparison-Final.ipynb`
+* `JanJuly2023_Baseline_LOCUS_Renewal_ZeroLegacy_CTExposureComparison_Final.ipynb`
+
+Together, these scripts evaluate how concentration fields and population-weighted exposures change across the baseline, LOCUS + HDV activity, accelerated fleet renewal, and zero legacy truck scenarios.
+
+## Software Requirements
+
+* Python 3.x
+* xarray
+* netCDF4
+* numpy
+* pandas
+* geopandas
+* shapely
+* pyproj
+* jupyter notebook
+
+## Notes
+
+This script should be run before any gridded concentration comparison or census tract exposure analysis. The output shapefiles serve as the spatial bridge between WRF-CMAQ model outputs and GIS/population-based exposure workflows.
 
