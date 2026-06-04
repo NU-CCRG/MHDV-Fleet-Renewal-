@@ -1,0 +1,34 @@
+USE c17031y2022_20240214_zeropre2010s;
+
+CREATE TABLE sourcetypeagedistribution_backup AS
+SELECT *
+FROM sourcetypeagedistribution;
+
+
+SELECT 
+    sourceTypeID,
+    yearID,
+    ageID,
+    (yearID - ageID) AS modelYear,
+    ageFraction
+FROM sourcetypeagedistribution
+WHERE yearID = 2022
+  AND sourceTypeID IN (52, 53, 61, 62)
+ORDER BY sourceTypeID, ageID;
+
+USE c17031y2022_20240214_zeropre2010s;
+
+UPDATE sourcetypeagedistribution
+SET ageFraction = 0
+WHERE yearID = 2022
+  AND sourceTypeID IN (52, 53, 61, 62)
+  AND ageID >= 13;
+
+SELECT 
+    sourceTypeID,
+    yearID,
+    SUM(ageFraction) AS sumFraction
+FROM sourcetypeagedistribution
+WHERE yearID = 2022
+  AND sourceTypeID IN (52, 53, 61, 62)
+GROUP BY sourceTypeID, yearID;

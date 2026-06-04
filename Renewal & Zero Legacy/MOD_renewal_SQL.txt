@@ -1,0 +1,41 @@
+USE c17031y2022_20240214_renewal;
+
+CREATE TABLE sourcetypeagedistribution_renewal_backup AS
+SELECT *
+FROM sourcetypeagedistribution;
+
+
+UPDATE sourcetypeagedistribution d
+JOIN (
+    SELECT 
+        sourceTypeID,
+        yearID,
+        SUM(CASE 
+                WHEN ageID >= 13 THEN ageFraction 
+                ELSE 0 
+            END) AS legacy_sum
+    FROM sourcetypeagedistribution
+    WHERE yearID = 2022
+      AND sourceTypeID IN (52, 53, 61, 62)
+    GROUP BY sourceTypeID, yearID
+) x
+ON d.sourceTypeID = x.sourceTypeID
+AND d.yearID = x.yearID
+SET d.ageFraction = CASE
+    WHEN d.ageID >= 13 THEN 0                 -- legacy trucks (pre-2010): removed
+    WHEN d.ageID = 0 THEN d.ageFraction + x.legacy_sum  -- newest model gets all legacy mass
+    ELSE d.ageFraction                        -- intermediate ages unchanged
+END
+WHERE d.yearID = 2022
+  AND d.sourceTypeID IN (52, 53, 61, 62);
+
+
+SELECT 
+    sourceTypeID,
+    yearID,
+    SUM(ageFraction) AS sumFraction
+FROM sourcetypeagedistribution
+WHERE yearID = 2022
+  AND sourceTypeID IN (52, 53, 61, 62)
+GROUP BY sourceTypeID, yearID;
+
